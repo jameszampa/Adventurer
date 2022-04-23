@@ -11,6 +11,7 @@ require 'src/states/StartState'
 
 require 'src/Animation'
 require 'src/Adventurer'
+require 'src/Wolf'
 
 gTextures = {
     ['adventurer-crouch-00'] = love.graphics.newImage('assets/Adventurer-1.5/Individual Sprites/adventurer-crouch-00.png'),
@@ -99,6 +100,18 @@ gTextures = {
     ['background_layer_1'] = love.graphics.newImage('assets/background/background_layer_1.png'),
     ['background_layer_2'] = love.graphics.newImage('assets/background/background_layer_2.png'),
     ['background_layer_3'] = love.graphics.newImage('assets/background/background_layer_3.png'),
+    ['Wolf_Idle_1'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_1.png'),
+    ['Wolf_Idle_2'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_2.png'),
+    ['Wolf_Idle_3'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_3.png'),
+    ['Wolf_Idle_4'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_4.png'),
+    ['Wolf_Idle_5'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_5.png'),
+    ['Wolf_Idle_6'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_6.png'),
+    ['Wolf_Idle_7'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_7.png'),
+    ['Wolf_Idle_8'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_8.png'),
+    ['Wolf_Idle_9'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_9.png'),
+    ['Wolf_Idle_10'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_10.png'),
+    ['Wolf_Idle_11'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_11.png'),
+    ['Wolf_Idle_12'] = love.graphics.newImage('assets/Wolf/Wolf_Idle_12.png'),
 }
 
 gFonts = {

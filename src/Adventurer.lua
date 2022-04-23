@@ -110,13 +110,6 @@ function Adventurer:update(dt)
         self.dy = 0
     end
 
-    -- apply collision with walls
-    if self.x < 0 then
-        self.x = 0
-    elseif self.x > VIRTUAL_WIDTH - ADVENTURER_WIDTH then
-        self.x = VIRTUAL_WIDTH - ADVENTURER_WIDTH
-    end
-
     -- update direction based on velocity
     if self.dx_floor > 1 then
         self.direction = 'right'
