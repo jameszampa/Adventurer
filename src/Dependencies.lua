@@ -96,6 +96,9 @@ gTextures = {
     ['adventurer-run2-03'] = love.graphics.newImage('assets/Adventurer-Hand-Combat/Individual Sprites/adventurer-run2-03.png'),
     ['adventurer-run2-04'] = love.graphics.newImage('assets/Adventurer-Hand-Combat/Individual Sprites/adventurer-run2-04.png'),
     ['adventurer-run2-05'] = love.graphics.newImage('assets/Adventurer-Hand-Combat/Individual Sprites/adventurer-run2-05.png'),
+    ['background_layer_1'] = love.graphics.newImage('assets/background/background_layer_1.png'),
+    ['background_layer_2'] = love.graphics.newImage('assets/background/background_layer_2.png'),
+    ['background_layer_3'] = love.graphics.newImage('assets/background/background_layer_3.png'),
 }
 
 gFonts = {

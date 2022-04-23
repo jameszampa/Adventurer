@@ -439,7 +439,7 @@ end
 
 function Adventurer:render()
     if self.direction == 'right' then
-        love.graphics.draw(gTextures[self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, 1, 1, -ADVENTURER_WIDTH / 4, 0)
+        love.graphics.draw(gTextures[self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, 1, 1, -ADVENTURER_WIDTH / 2, 0)
     else
         love.graphics.draw(gTextures[self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, -1, 1, VIRTUAL_WIDTH / 4, 0)
     end
