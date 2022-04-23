@@ -8,6 +8,8 @@ function Wolf:init()
     self.dx_floor = 0
     self.dy = 0
 
+    self.hp = math.random(8) + math.random(8) + 2
+
     self.state = 'idle'
     self.direction = 'left'
 

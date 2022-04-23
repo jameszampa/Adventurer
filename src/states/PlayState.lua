@@ -34,6 +34,14 @@ function PlayState:render()
 
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
+    
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25) - 1, math.floor(self.wolf.y - WOLF_HEIGHT / 4) - 1)
+    love.graphics.setColor(255, 0, 0, 255)
+    love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25), math.floor(self.wolf.y - WOLF_HEIGHT / 4))
+    love.graphics.setColor(255, 255, 255, 255)
+
     self.wolf:render()
     self.adventurer:render()
 
