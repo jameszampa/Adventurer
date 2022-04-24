@@ -12,6 +12,7 @@ require 'src/states/StartState'
 require 'src/Animation'
 require 'src/Adventurer'
 require 'src/Wolf'
+require 'src/UI'
 
 gTextures = {
     ['adventurer-crouch-00'] = love.graphics.newImage('assets/Adventurer-1.5/Individual Sprites/adventurer-crouch-00.png'),

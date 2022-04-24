@@ -4,6 +4,9 @@ function Adventurer:init()
     self.x = VIRTUAL_WIDTH / 2 - ADVENTURER_WIDTH
     self.y = -ADVENTURER_HEIGHT
 
+    self.hp = 8
+    self.max_hp = 10
+
     self.dx = 0
     self.dx_floor = 0
     self.dy = 0
