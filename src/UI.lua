@@ -24,6 +24,5 @@ function UI:render()
         -- black : outline
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.rectangle('line', 8, 8, self.hp_meter_width, self.hp_meter_height, self.hp_meter_width / 20, self.hp_meter_height / 2)
-
     end
 end

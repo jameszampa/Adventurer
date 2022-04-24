@@ -23,17 +23,17 @@ end
 
 function PlayState:render()
     love.graphics.push()
-    self.ui:render()
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(gTextures['background_layer_1'], -self.backgroundScroll, 0)
     love.graphics.draw(gTextures['background_layer_2'], -self.backgroundScroll, 0)
     love.graphics.draw(gTextures['background_layer_3'], -self.backgroundScroll, 0)
+    self.ui:render()
 
-    love.graphics.setFont(gFonts['medium'])
-    love.graphics.setColor(0, 0, 0, 255)
-    -- -- love.graphics.printf(self.adventurer.state, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
-    -- love.graphics.printf(self.camX, 0, VIRTUAL_HEIGHT / 2 + 32, VIRTUAL_WIDTH, 'center')
-    love.graphics.printf(self.backgroundScroll, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
+    -- love.graphics.setFont(gFonts['medium'])
+    -- love.graphics.setColor(0, 0, 0, 255)
+    -- -- -- love.graphics.printf(self.adventurer.state, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
+    -- -- love.graphics.printf(self.camX, 0, VIRTUAL_HEIGHT / 2 + 32, VIRTUAL_WIDTH, 'center')
+    -- love.graphics.printf(self.backgroundScroll, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
