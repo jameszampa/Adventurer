@@ -21,6 +21,7 @@ function love.load()
     gStateMachine:change('start')
 
     love.keyboard.keysPressed = {}
+    love.mouse.mousePressed = {}
 end
 
 function love.resize(w, h)
@@ -35,6 +36,14 @@ function love.keypressed(key)
     love.keyboard.keysPressed[key] = true
 end
 
+function love.mousepressed(x, y, button)
+    love.mouse.keysPressed[button] = true
+end
+
+function love.mouse.wasPressed(button)
+    return love.mouse.keysPressed[button]
+end
+
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
@@ -43,6 +52,7 @@ function love.update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
+    love.mouse.keysPressed = {}
 end
 
 function love.draw()

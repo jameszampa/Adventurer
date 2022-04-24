@@ -16,6 +16,8 @@ function Adventurer:init()
     self.jump_velocity = 0
 
     self.attack_counter = 0
+    self.punch_counter = 0
+    self.kick_counter = 0
 
     self.get_up_timer = 0
     self.lockout_timer = 0
@@ -26,6 +28,9 @@ function Adventurer:init()
     self.attack2_timer = 0
     self.attack3_timer = 0
     self.jumpSquat_timer = 0
+    self.punch_timer = 0
+    self.kick_timer = 0
+    self.run_punch_timer = 0
 
     self.speed_before_jump = 0
 
@@ -145,10 +150,18 @@ function Adventurer:update(dt)
     elseif (self.state == 'idle-2' or self.state == 'run3') and love.keyboard.isDown('a') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
         self:updateState('run3', 0.2, false)
-    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd') and love.keyboard.isDown('d') then
-        self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd') and love.keyboard.isDown('a') then
-        self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
+    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd' or self.state == 'run-punch') and love.keyboard.isDown('d') then
+        if self.state == 'run-punch' then
+            self:updateVelocity(-ADVENTURER_SLIDE_DECELERATION, dt)
+        else
+            self:updateVelocity(ADVENTURER_ACCELERATION, dt)
+        end
+    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd' or self.state == 'run-punch') and love.keyboard.isDown('a') then
+        if self.state == 'run-punch' then
+            self:updateVelocity(ADVENTURER_SLIDE_DECELERATION, dt)
+        else
+            self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
+        end
     elseif (self.state == 'crouch' or self.state == 'crouch-walk' or self.state == 'crouch-no-swrd' or self.state == 'crouch-walk-no-swrd') and love.keyboard.isDown('a') and love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
         if self.state == 'crouch' or self.state == 'crouch-walk' then
@@ -285,6 +298,68 @@ function Adventurer:update(dt)
     else
         self.attack3_timer = 0
     end
+
+    if (self.state == 'run-no-swrd' or self.state == 'run2-no-swrd') and love.mouse.wasPressed(1) then
+        self:updateState('run-punch', 0.1, false)
+    end
+
+    if self.state == 'run-punch' then
+        self.run_punch_timer = self.run_punch_timer + dt
+        if self.run_punch_timer > #self.animation.frames * self.animation.interval then
+            self:updateState('idle-no-swrd', 0.2, false)
+        end
+    else
+        self.run_punch_timer = 0
+    end
+
+    if self.state == 'idle-no-swrd' and love.mouse.wasPressed(1) then
+        self:updateState('punch', 0.1, false)
+    elseif self.state == 'idle-no-swrd' and love.mouse.wasPressed(2) then
+        self:updateState('kick', 0.1, false)
+    end
+
+    if self.state == 'kick' then
+        self.kick_timer = self.kick_timer + dt
+        if love.mouse.wasPressed(2) then
+            self.kick_counter = self.kick_counter + 1
+        end
+        if self.kick_timer > 5 * self.animation.interval and self.kick_timer < #self.animation.frames * self.animation.interval then
+            if self.kick_counter < 2 then
+                self.kick_counter = 0
+                self:updateState('idle-no-swrd', 0.2, false)
+            end
+        elseif self.kick_timer > #self.animation.frames * self.animation.interval then
+            self.kick_counter = 0
+            self:updateState('idle-no-swrd', 0.2, false)
+        end
+    else
+        self.kick_timer = 0
+    end
+
+    if self.state == 'punch' then
+        self.punch_timer = self.punch_timer + dt
+        if love.mouse.wasPressed(1) then
+            self.punch_counter = self.punch_counter + 1
+        end
+        if self.punch_timer > 4 * self.animation.interval and self.punch_timer < 8 * self.animation.interval then
+            if self.punch_counter < 2 then
+                self.punch_counter = 0
+                self:updateState('idle-no-swrd', 0.2, false)
+            end
+        elseif self.punch_timer > 8 * self.animation.interval and self.punch_timer < #self.animation.frames * self.animation.interval then
+            if self.punch_counter < 3 then
+                self.punch_counter = 0
+                self:updateState('idle-no-swrd', 0.2, false)
+            end
+        elseif self.punch_timer > #self.animation.frames * self.animation.interval then
+            self.punch_counter = 0
+            self:updateState('idle-no-swrd', 0.2, false)
+        end
+    else
+        self.punch_timer = 0
+    end
+        
+
 
     if self.state == 'walk' and self.dx_floor == 0 then
         self:updateState('idle', 0.2, false)
