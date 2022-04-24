@@ -17,6 +17,8 @@ require 'src/Utils'
 
 adventurerTextures = importAdventurerAssets()
 
+wolfTextures = importWolfAssets()
+
 background1 = love.graphics.newImage('assets/background/background_layer_1.png')
 background2 = love.graphics.newImage('assets/background/background_layer_2.png')
 background3 = love.graphics.newImage('assets/background/background_layer_3.png')

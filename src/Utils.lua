@@ -17,3 +17,23 @@ function importAdventurerAssets()
 
     return assets
 end
+
+function importWolfAssets()
+    local assets = {}
+
+    local files = love.filesystem.getDirectoryItems('assets/Wolf/')
+    local prefix = 'Wolf_'
+    local ending = '_00.png'
+
+    for k, file in pairs(files) do
+        local state = string.sub(file, #prefix + 1, #file - #ending)
+        local full_file_path = 'assets/Wolf/' .. file
+        print(state)
+        if assets[state] == nil then
+            assets[state] = {}
+        end
+        table.insert(assets[state], love.graphics.newImage(full_file_path))
+    end
+
+    return assets
+end

@@ -5,23 +5,28 @@ function Wolf:init()
     self.y = VIRTUAL_HEIGHT - WOLF_HEIGHT
 
     self.dx = 0
-    self.dx_floor = 0
     self.dy = 0
 
     self.hp = math.random(8) + math.random(8) + 2
 
-    self.state = 'idle'
-    self.direction = 'left'
+    self.state = ''
+    self.direction = 'right'
 
-    self.idle = {'Wolf_Idle_1', 'Wolf_Idle_2', 'Wolf_Idle_3', 'Wolf_Idle_4', 'Wolf_Idle_5', 'Wolf_Idle_6', 'Wolf_Idle_7', 'Wolf_Idle_8', 'Wolf_Idle_9', 'Wolf_Idle_10', 'Wolf_Idle_11', 'Wolf_Idle_12'}
+    self.distanceToAdventurer = 0
+    self.facingAdventurer = false
 
-    self.animation = Animation({frames = self.idle, interval = 0.2})
+    self.attack = 1
+
+    self.num_hits = 0
+    self.hit_reset = true
+
+    self:updateState('Idle')
 end
 
-function Wolf:update(dt)
+function Wolf:update(dt, adventurer)
     -- update position
-    self.x = self.x + self.dx_floor * dt
-    self.y = self.y + self.dy * dt
+    self.x = self.x + math.floor(self.dx) * dt
+    self.y = self.y + math.floor(self.dy) * dt
 
     -- apply gravity and collision with ground
     if self.y < VIRTUAL_HEIGHT - WOLF_HEIGHT then
@@ -32,13 +37,69 @@ function Wolf:update(dt)
     end
 
     -- update direction based on velocity
-    if self.dx_floor > 1 then
+    if math.floor(self.dx) > 1 then
         self.direction = 'right'
-    elseif self.dx_floor < -1 then
+    elseif math.floor(self.dx) < -1 then
         self.direction = 'left'
     end
 
+    self.distanceToAdventurer = math.sqrt((adventurer.x - self.x) ^ 2 + (adventurer.y - self.y) ^ 2)
+
+    if self.direction == 'left' and adventurer.x < self.x then
+        self.facingAdventurer = true
+    elseif self.direction == 'right' and adventurer.x > self.x then
+        self.facingAdventurer = true
+    else
+        self.facingAdventurer = false
+    end
+
+    if self.state == 'Idle' and self.distanceToAdventurer <= 25 and self.facingAdventurer then
+        self:updateState('Attack')
+    elseif self.state == 'Attack' then
+        self:updateState('Attack')
+    else
+        self:updateState('Run')
+    end
+
+    if self.state == 'Run' then
+        if adventurer.x < self.x then
+            self.dx = self.dx - WOLF_SPEED * dt
+            if self.dx < -WOLF_SPEED then
+                self.dx = -WOLF_SPEED
+            end
+        elseif adventurer.x > self.x then
+            self.dx = self.dx + WOLF_SPEED * dt
+            if self.dx > WOLF_SPEED then
+                self.dx = WOLF_SPEED
+            end
+        end
+
+        if self.distanceToAdventurer <= 25 then
+            self.dx = 0
+            self:updateState('Attack')
+        end
+
+        if self.distanceToAdventurer >= VIRTUAL_WIDTH / 2 + WOLF_WIDTH then
+            self.dx = 0
+            self:updateState('Idle')
+        end
+    end
+
+    if self.state == 'Attack' then
+        if self.animation:getCurrentFrame() >= 9 then
+            if self.distanceToAdventurer <= 25 and self.hit and self.facingAdventurer then
+                adventurer.hp = adventurer.hp - self.attack
+                self.hit = false
+            end
+        end
+        if self.animation:getCurrentFrame() == #wolfTextures[self.state] then
+            self.hit = true
+            self:updateState('Idle')
+        end
+    end
+
     self.animation:update(dt)
+    return adventurer
 end
 
 function Wolf:updateState(state)
@@ -46,15 +107,23 @@ function Wolf:updateState(state)
         return
     end
     self.state = state
-    if self.state == 'idle' then
-        self.animation = Animation({frames = self.idle, interval = 0.2, hold = false})
+    local indexs = {}
+    for x = 1, #wolfTextures[self.state] do
+        table.insert(indexs, x)
     end
+    local interval = 0.2
+    if self.state == 'Attack' then
+        interval = 0.1
+    elseif self.state == 'Run' then
+        interval = 0.15
+    end
+    self.animation = Animation({frames = indexs, interval = interval, hold = false})
 end
 
 function Wolf:render()
     if self.direction == 'right' then
-        love.graphics.draw(gTextures[self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, 1, 1, -WOLF_WIDTH / 2, 0)
+        love.graphics.draw(wolfTextures[self.state][self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, 1, 1, -WOLF_WIDTH / 2, 0)
     else
-        love.graphics.draw(gTextures[self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, -1, 1, VIRTUAL_WIDTH / 4, 0)
+        love.graphics.draw(wolfTextures[self.state][self.animation:getCurrentFrame()], math.floor(self.x), math.floor(self.y), 0, -1, 1, VIRTUAL_WIDTH / 4, 0)
     end
 end
