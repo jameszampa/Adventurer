@@ -47,7 +47,7 @@ function Adventurer:updateVelocity(acceleration_constant, dt)
         elseif self.dx < -ADVENTURER_MAX_CROUCH_WALK_SPEED then
             self.dx = -ADVENTURER_MAX_CROUCH_WALK_SPEED
         end
-    elseif self.state == 'run2' then
+    elseif self.state == 'run2' or self.state == 'run2-no-swrd' then
         if self.dx > ADVENTURER_MAX_SPRINT_SPEED then
             self.dx = ADVENTURER_MAX_SPRINT_SPEED
         elseif self.dx < -ADVENTURER_MAX_SPRINT_SPEED then
@@ -57,7 +57,7 @@ function Adventurer:updateVelocity(acceleration_constant, dt)
         local limit = 0
         if self.state_before_jump == 'walk' then
             limit = ADVENTURER_MAX_CROUCH_WALK_SPEED
-        elseif self.state_before_jump == 'run2' then
+        elseif self.state_before_jump == 'run2' or self.state_before_jump == 'run2-no-swrd' then
             limit = ADVENTURER_MAX_SPRINT_SPEED
         elseif self.state_before_jump == 'run' or self.state_before_jump == 'run3' then
             limit = ADVENTURER_MAX_RUN_SPEED
@@ -119,12 +119,20 @@ function Adventurer:update(dt)
         else
             self:updateState('run-no-swrd', 0.2, false)
         end
-    elseif (self.state == 'idle' or self.state == 'run' or self.state == 'run2') and love.keyboard.isDown('a') and love.keyboard.isDown('lctrl') and not love.keyboard.isDown('lshift') then
+    elseif (self.state == 'idle' or self.state == 'idle-no-swrd' or self.state == 'run' or self.state == 'run-no-swrd' or self.state == 'run2' or self.state == 'run2-no-swrd') and love.keyboard.isDown('a') and love.keyboard.isDown('lctrl') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
-    elseif (self.state == 'idle' or self.state == 'run' or self.state == 'run2') and love.keyboard.isDown('d') and love.keyboard.isDown('lctrl') and not love.keyboard.isDown('lshift') then
+        if self.has_sword then
+            self:updateState('run2', 0.2, false)
+        else
+            self:updateState('run2-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'idle' or self.state == 'idle-no-swrd' or self.state == 'run' or self.state == 'run-no-swrd' or self.state == 'run2' or self.state == 'run2-no-swrd') and love.keyboard.isDown('d') and love.keyboard.isDown('lctrl') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
+        if self.has_sword then
+            self:updateState('run2', 0.2, false)
+        else
+            self:updateState('run2-no-swrd', 0.2, false)
+        end
     elseif (self.state == 'idle' or self.state == 'run' or self.state == 'walk') and love.keyboard.isDown('a') and love.keyboard.isDown('lalt') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
         self:updateState('walk', 0.2, false)
@@ -137,37 +145,65 @@ function Adventurer:update(dt)
     elseif (self.state == 'idle-2' or self.state == 'run3') and love.keyboard.isDown('a') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
         self:updateState('run3', 0.2, false)
-    elseif (self.state == 'jump' or self.state == 'fall') and love.keyboard.isDown('d') then
+    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd') and love.keyboard.isDown('d') then
         self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-    elseif (self.state == 'jump' or self.state == 'fall') and love.keyboard.isDown('a') then
+    elseif (self.state == 'jump' or self.state == 'fall' or self.state == 'jump-no-swrd') and love.keyboard.isDown('a') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
-    elseif (self.state == 'crouch' or self.state == 'crouch-walk') and love.keyboard.isDown('a') and love.keyboard.isDown('lshift') then
+    elseif (self.state == 'crouch' or self.state == 'crouch-walk' or self.state == 'crouch-no-swrd' or self.state == 'crouch-walk-no-swrd') and love.keyboard.isDown('a') and love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
-        self:updateState('crouch-walk', 0.2, false)
-    elseif (self.state == 'crouch' or self.state == 'crouch-walk') and love.keyboard.isDown('d') and love.keyboard.isDown('lshift') then
+        if self.state == 'crouch' or self.state == 'crouch-walk' then
+            self:updateState('crouch-walk', 0.2, false)
+        elseif self.state == 'crouch-no-swrd' or self.state == 'crouch-walk-no-swrd' then
+            self:updateState('crouch-walk-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'crouch' or self.state == 'crouch-walk' or self.state == 'crouch-no-swrd' or self.state == 'crouch-walk-no-swrd') and love.keyboard.isDown('d') and love.keyboard.isDown('lshift') then
         self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-        self:updateState('crouch-walk', 0.2, false)
-    elseif (self.state == 'crouch-walk') and love.keyboard.isDown('a') and not love.keyboard.isDown('lshift') then
+        if self.has_sword then
+            self:updateState('crouch-walk', 0.2, false)
+        else
+            self:updateState('crouch-walk-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'crouch-walk' or self.state == 'crouch-walk-no-swrd') and love.keyboard.isDown('a') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
+        if self.has_swrd then
+            self:updateState('run', 0.2, false)
+        else
+            self:updateState('run-no-swrd', 0.2, false)
+        end
     elseif (self.state == 'crouch-walk') and love.keyboard.isDown('d') and not love.keyboard.isDown('lshift') then
         self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
+        if self.has_swrd then
+            self:updateState('run', 0.2, false)
+        else
+            self:updateState('run-no-swrd', 0.2, false)
+        end
     elseif (self.state == 'walk') and love.keyboard.isDown('d') and not love.keyboard.isDown('lalt') then
         self:updateVelocity(ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
+        if self.has_swrd then
+            self:updateState('run', 0.2, false)
+        else
+            self:updateState('run-no-swrd', 0.2, false)
+        end
     elseif (self.state == 'walk') and love.keyboard.isDown('a') and not love.keyboard.isDown('lalt') then
         self:updateVelocity(-ADVENTURER_ACCELERATION, dt)
-        self:updateState('run', 0.2, false)
-    elseif (self.state == 'run3' or self.state == 'run' or self.state == 'slide' or self.state == 'run2') and love.keyboard.isDown('lshift') then
-        self:updateState('slide', 0.2, false)
+        if self.has_swrd then
+            self:updateState('run', 0.2, false)
+        else
+            self:updateState('run-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'run3' or self.state == 'run' or self.state == 'slide' or self.state == 'run2' or self.state == 'run2-no-swrd' or self.state == 'run-no-swrd' or self.state == 'slide-no-swrd') and love.keyboard.isDown('lshift') then
+        if self.has_swrd then
+            self:updateState('slide', 0.2, false)
+        else
+            self:updateState('slide-no-swrd', 0.2, false)
+        end
         if self.dx_floor > 0 then
             self:updateVelocity(-ADVENTURER_SLIDE_DECELERATION, dt)
         elseif self.dx_floor < 0 then
             self:updateVelocity(ADVENTURER_SLIDE_DECELERATION, dt)
         end
     else
-        if self.state == 'slide' then
+        if self.state == 'slide' or self.state == 'slide-no-swrd' then
             if self.dx_floor > 0 then
                 self:updateVelocity(-ADVENTURER_SLIDE_DECELERATION, dt)
             elseif self.dx_floor < 0 then
@@ -255,39 +291,55 @@ function Adventurer:update(dt)
     end
 
     -- go to idle or slideTransition once we have stopped running
-    if (self.state == 'run' or self.state == 'run2' or self.state == 'run-no-swrd') and self.dx_floor == 0 then
+    if (self.state == 'run' or self.state == 'run2' or self.state == 'run-no-swrd' or self.state == 'run2-no-swrd') and self.dx_floor == 0 then
         if self.has_sword then
             self:updateState('idle', 0.2, false)
         else
             self:updateState('idle-no-swrd', 0.2, false)
         end
-    elseif self.state == 'slide' and self.dx_floor == 0 then
-        self:updateState('stand', 0.1, false)
+    elseif (self.state == 'slide' or self.state == 'slide-no-swrd') and self.dx_floor == 0 then
+        if self.has_sword then
+            self:updateState('stand', 0.1, false)
+        else
+            self:updateState('stand-no-swrd', 0.1, false)
+        end
     elseif self.state == 'run3' and self.dx_floor == 0 then
         self:updateState('idle-2', 0.2, false)
     end
 
-    if self.state == 'run2' and not love.keyboard.isDown('lctrl') then
-        self:updateState('run', 0.2, false)
+    if (self.state == 'run2' or self.state == 'run2-no-swrd') and not love.keyboard.isDown('lctrl') then
+        if self.has_sword then
+            self:updateState('run', 0.2, false)
+        else
+            self:updateState('run-no-swrd', 0.2, false)
+        end
     end
 
-    if self.state == 'stand' then
+    if self.state == 'stand' or self.state == 'stand-no-swrd' then
         self.get_up_timer = self.get_up_timer + dt
         if self.get_up_timer > #self.animation.frames * self.animation.interval then
-            self:updateState('lockout', 0.075, false)
+            if self.has_swrd then
+                self:updateState('lockout', 0.075, false)
+            else
+                self:updateState('lockout-no-swrd', 0.075, false)
+            end
         end
     else
         self.get_up_timer = 0
     end
 
-    if self.state == 'lockout' then
+    if self.state == 'lockout' or self.state == 'lockout-no-swrd' then
         self.lockout_timer = self.lockout_timer + dt
         local num_frames = #self.animation.frames
         if love.keyboard.isDown('lshift') then
             num_frames = #self.animation.frames - 1
         end
         if self.lockout_timer > num_frames * self.animation.interval then
-            self:updateState('idle', 0.2, false)
+            if self.has_swrd then
+                self:updateState('idle', 0.075, false)
+            else
+                self:updateState('idle-no-swrd', 0.075, false)
+            end
         end
     else
         self.lockout_timer = 0
@@ -313,23 +365,31 @@ function Adventurer:update(dt)
 
 
     -- start jump animation if on ground and space is pressed
-    if (self.state == 'idle' or self.state == 'idle-2' or self.state == 'run' or self.state == 'run3' or self.state == 'walk' or self.state == 'run2') and love.keyboard.isDown('space') then
+    if (self.state == 'idle' or self.state == 'idle-2' or self.state == 'run' or self.state == 'run3' or self.state == 'walk' or self.state == 'run2' or self.state == 'run2-no-swrd' or self.state == 'idle-no-swrd' or self.state == 'run-no-swrd') and love.keyboard.isDown('space') then
         self.state_before_jump = self.state
-        if self.state == 'idle' then
+        if (self.state == 'idle' or self.state == 'idle-2') then
             self:updateState('jumpSquat', 0.2, true)
-        elseif self.state == 'idle-2' then
-            self:updateState('jumpSquat', 0.2, true)
+        elseif self.state == 'idle-no-swrd' then
+            self:updateState('jumpSquat-no-swrd', 0.2, true)
         else
             self.jump_velocity = ADVENTURER_MAX_JUMP_VELOCITY + (0.50 * ADVENTURER_MIN_JUMP_VELOCITY)
-            self:updateState('jump', 0.2, false)
+            if self.has_sword then
+                self:updateState('jump-no-swrd', 0.2, false)
+            else
+                self:updateState('jump', 0.2, false)
+            end
         end
     end
 
     -- stay in jumpSquat until you release space
-    if self.state == 'jumpSquat' and not love.keyboard.isDown('space') then
+    if (self.state == 'jumpSquat' or self.state == 'jumpSquat-no-swrd') and not love.keyboard.isDown('space') then
         self.jump_velocity = ADVENTURER_MAX_JUMP_VELOCITY + (self.jumpSquat_timer * ADVENTURER_MIN_JUMP_VELOCITY)
-        self:updateState('jump', 0.2, false)
-    elseif self.state == 'jumpSquat' and love.keyboard.isDown('space') then
+        if self.has_sword then
+            self:updateState('jump', 0.2, false)
+        else
+            self:updateState('jump-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'jumpSquat' or self.state == 'jumpSquat-no-swrd') and love.keyboard.isDown('space') then
         self.jumpSquat_timer = self.jumpSquat_timer + dt
         if self.jumpSquat_timer > 1 then
             self.jumpSquat_timer = 1
@@ -352,27 +412,47 @@ function Adventurer:update(dt)
         end
     end
 
-    if self.state == 'crouch-walk' and not love.keyboard.isDown('a') and not love.keyboard.isDown('d') and love.keyboard.isDown('lshift') and self.dx_floor == 0 then
-        self:updateState('crouch', 0.2, false)
-    elseif (self.state == 'idle-2' or self.state == "idle" or self.state == 'crouch') and self.y == VIRTUAL_HEIGHT - ADVENTURER_HEIGHT and love.keyboard.isDown('lshift') then
+    if (self.state == 'crouch-walk' or self.state == 'crouch-walk-no-swrd') and not love.keyboard.isDown('a') and not love.keyboard.isDown('d') and love.keyboard.isDown('lshift') and self.dx_floor == 0 then
+        if self.has_sword then
+            self:updateState('crouch', 0.2, false)
+        else
+            self:updateState('crouch-no-swrd', 0.2, false)
+        end
+    elseif (self.state == 'idle-2' or self.state == "idle" or self.state == 'idle-no-swrd' or self.state == 'crouch' or self.state == 'crouch-no-swrd') and self.y == VIRTUAL_HEIGHT - ADVENTURER_HEIGHT and love.keyboard.isDown('lshift') then
         if self.state == 'idle-2' then
             self:updateState('swrd-shte', 0.1, false)
         else
-            self:updateState('crouch', 0.2, false)
+            if self.has_sword then
+                self:updateState('crouch', 0.2, false)
+            else
+                self:updateState('crouch-no-swrd', 0.2, false)
+            end
         end
     end
 
-    if self.state == 'crouch-walk' and self.dx_floor == 0 then
+    if (self.state == 'crouch-walk' or self.state == 'crouch-walk-no-swrd') and self.dx_floor == 0 then
         if love.keyboard.isDown('lshift') then
-            self:updateState('crouch', 0.2, false)
+            if self.has_sword then
+                self:updateState('crouch', 0.2, false)
+            else
+                self:updateState('crouch-no-swrd', 0.2, false)
+            end
         else
-            self:updateState('idle', 0.2, false)
+            if self.has_sword then
+                self:updateState('idle', 0.2, false)
+            else
+                self:updateState('idle-no-swrd', 0.2, false)
+            end
         end
     end
 
     -- return to idle state from crouch state if not holding 'lshift'
-    if self.state == 'crouch' and not love.keyboard.isDown('lshift') then
-        self:updateState('idle', 0.2, false)
+    if (self.state == 'crouch' or self.state == 'crouch-no-swrd') and not love.keyboard.isDown('lshift') then
+        if self.has_sword then
+            self:updateState('idle', 0.2, false)
+        else
+            self:updateState('idle-no-swrd', 0.2, false)
+        end
     end
 
     if self.state == 'idle' and (love.keyboard.wasPressed('f') or love.keyboard.wasPressed('1')) then
@@ -393,7 +473,7 @@ function Adventurer:updateState(state, interval, hold)
     for x = 1, #adventurerTextures[self.state] do
         table.insert(indexs, x)
     end
-    if self.state == 'jump' then
+    if self.state == 'jump' or self.state == 'jump-no-swrd' then
         self.dy = self.jump_velocity
     end
     self.animation = Animation({frames = indexs, interval = interval, hold = hold})
