@@ -2,7 +2,7 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
     self.adventurer = Adventurer()
-    self.wolf = Wolf()
+    -- self.wolf = Wolf()
     self.ui = UI()
     self.backgroundScroll = 0
     self.camX = 0
@@ -12,7 +12,7 @@ end
 function PlayState:update(dt)
     Timer.update(dt)
     self.adventurer:update(dt)
-    self.wolf:update(dt)
+    -- self.wolf:update(dt)
     self.ui:update(dt, self.adventurer)
 
     self.backgroundScroll = (self.backgroundScroll + self.adventurer.dx_floor * dt) % BACKGROUND_LOOPING_POINT
@@ -24,28 +24,28 @@ end
 function PlayState:render()
     love.graphics.push()
     love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(gTextures['background_layer_1'], -self.backgroundScroll, 0)
-    love.graphics.draw(gTextures['background_layer_2'], -self.backgroundScroll, 0)
-    love.graphics.draw(gTextures['background_layer_3'], -self.backgroundScroll, 0)
+    love.graphics.draw(background1, -self.backgroundScroll, 0)
+    love.graphics.draw(background2, -self.backgroundScroll, 0)
+    love.graphics.draw(background3, -self.backgroundScroll, 0)
     self.ui:render()
 
-    -- love.graphics.setFont(gFonts['medium'])
-    -- love.graphics.setColor(0, 0, 0, 255)
-    -- -- -- love.graphics.printf(self.adventurer.state, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
-    -- -- love.graphics.printf(self.camX, 0, VIRTUAL_HEIGHT / 2 + 32, VIRTUAL_WIDTH, 'center')
-    -- love.graphics.printf(self.backgroundScroll, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
+    love.graphics.setFont(gFonts['medium'])
+    love.graphics.setColor(255, 255, 255, 255)
+    -- -- love.graphics.printf(self.adventurer.state, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
+    -- love.graphics.printf(self.camX, 0, VIRTUAL_HEIGHT / 2 + 32, VIRTUAL_WIDTH, 'center')
+    love.graphics.printf(self.adventurer.dy, 0, VIRTUAL_HEIGHT / 2 + 16, VIRTUAL_WIDTH, 'center')
 
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
     
-    love.graphics.setFont(gFonts['small'])
-    love.graphics.setColor(0, 0, 0, 255)
-    love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25) - 1, math.floor(self.wolf.y - WOLF_HEIGHT / 4) - 1)
-    love.graphics.setColor(255, 0, 0, 255)
-    love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25), math.floor(self.wolf.y - WOLF_HEIGHT / 4))
-    love.graphics.setColor(255, 255, 255, 255)
+    -- love.graphics.setFont(gFonts['small'])
+    -- love.graphics.setColor(0, 0, 0, 255)
+    -- love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25) - 1, math.floor(self.wolf.y - WOLF_HEIGHT / 4) - 1)
+    -- love.graphics.setColor(255, 0, 0, 255)
+    -- love.graphics.print("HP: " .. tostring(self.wolf.hp), math.floor(self.wolf.x + WOLF_WIDTH * 1.25), math.floor(self.wolf.y - WOLF_HEIGHT / 4))
+    -- love.graphics.setColor(255, 255, 255, 255)
 
-    self.wolf:render()
+    -- self.wolf:render()
     self.adventurer:render()
 
 
