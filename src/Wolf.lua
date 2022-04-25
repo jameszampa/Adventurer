@@ -87,8 +87,9 @@ function Wolf:update(dt, adventurer)
 
     if self.state == 'Attack' then
         if self.animation:getCurrentFrame() >= 9 then
-            if self.distanceToAdventurer <= 25 and self.hit and self.facingAdventurer then
+            if self.distanceToAdventurer <= 25 and self.hit and self.facingAdventurer and adventurer.state ~= 'hurt' then
                 adventurer.hp = adventurer.hp - self.attack
+                adventurer.knock_down = true
                 self.hit = false
             end
         end

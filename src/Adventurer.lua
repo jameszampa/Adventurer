@@ -12,6 +12,7 @@ function Adventurer:init()
     self.dy = 0
 
     self.has_sword = false
+    self.knock_down = false
 
     self.jump_velocity = 0
 
@@ -232,6 +233,11 @@ function Adventurer:update(dt)
         end
     end
 
+    -- if self.knock_down then
+    --     self.knock_down = false
+    --     self:updateState('knock-dwn')
+    -- end
+
     if self.state == 'ground' and (love.keyboard.isDown('space') or love.keyboard.isDown('a') or love.keyboard.isDown('d')) then
         self:updateState('get-up', 0.1, false)
     elseif self.state == 'ground' and not love.keyboard.isDown('space') and not love.keyboard.isDown('a') and not love.keyboard.isDown('d') then
@@ -249,6 +255,23 @@ function Adventurer:update(dt)
         end
     else
         self.stand_up_timer = 0
+    end
+
+    if self.knock_down then
+        self.knock_down = false
+        if self.has_sword then
+            self:updateState('hurt', 0.2, false)
+        else
+            self:updateState('hurt-no-swrd', 0.2, false)
+        end
+    end
+
+    if (self.state == 'hurt' or self.state == 'hurt-no-swrd') and self.animation:getCurrentFrame() == #self.animation.frames then
+        if self.has_sword then
+            self:updateState('idle', 0.2, false)
+        else
+            self:updateState('idle-no-swrd', 0.2, false)
+        end
     end
 
     if self.state == 'idle-2' and love.keyboard.isDown('1') then
